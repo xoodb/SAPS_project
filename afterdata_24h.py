@@ -4,7 +4,7 @@ import apidb #db호출 파일
 import get_time #날짜 및 시간 호출 파일
 
 ''''
-기상청 api로 부터 예측 데이터를 불러와 DB에 저장
+기상청 api로 부터 24시간 예측 데이터를 불러와 DB에 저장
 '''
 
 # API 요청 주소
