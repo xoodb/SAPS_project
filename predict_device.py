@@ -13,9 +13,9 @@ panel_area = val[0][0]; Location_code = val[0][1] # 면적, 지역코드
 upd_count = 0 # 업데이트 횟수
 ins_count = 0 # INSERT 횟수
 
-for i in range(3):
-    target_date = get_time.get_after_date(i) 
-    sql_date = get_time.get_after_date_line(i) # SQL문에 사용할 날짜
+for i in range(28, 0, -1):
+    target_date = get_time.get_after_date(-i) 
+    sql_date = get_time.get_after_date_line(-i) # SQL문에 사용할 날짜
     sql = f'SELECT predict_solar_power FROM weather_storage_Day WHERE Date = "{target_date}" AND Location_code = {Location_code}'
     predict_solar = apidb.dbconfreeselect(sql)[0][0] # 해당일의 일사량 저장
     predict_out = unit_change.change_MJ_to_W(predict_solar * panel_area * 0.2) # 계산된 측정값을 MJ단위에서 W단위로 변환 저장
