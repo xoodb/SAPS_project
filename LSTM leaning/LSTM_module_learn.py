@@ -8,16 +8,15 @@ from keras.layers import LSTM
 from keras.layers import Dropout
 
 '''
-LSTM 모델 학습시켜서 모델 생성하는 코드
+LSTM 모델 학습시켜서 모델 생성
 '''
 
 # 데이터 파일 읽어오기
-train_data = pd.read_csv('weather_data_train.csv', encoding='euc-kr')
+train_data = pd.read_csv('total_data.csv', encoding='euc-kr')
 data = train_data.drop('날짜', axis=1) #날짜 컬럼 제거
 X_train = data.iloc[:, :-1].values #독립변수
 y_train = data.iloc[:, -1].values #종속변수
 y_train = y_train.reshape(-1, 1) #2차원으로 변형
-
 
 #일사량값 0~1사이로 정규화
 sc_x = MinMaxScaler() #입력값
@@ -28,26 +27,23 @@ y_train_scaled = sc_y.fit_transform(y_train)
 # 3차원 배열 변환
 X_train_scaled = np.reshape(X_train_scaled, (X_train_scaled.shape[0], X_train_scaled.shape[1], 1)) 
 #(batcho size - 행개수, timestep - 열개수, 3차원 개수)
-
 #순환 신경망 구성
 regressor = Sequential() #초기화
 
+
 memory_cell = 128 #뉴런의 수
+
 #첫번째 LSTM layer
-regressor.add(LSTM(units = memory_cell, return_sequences = True, input_shape = (X_train.shape[1], 1)))
-regressor.add(Dropout(0.2)) #과적합을 피하기 위해 사용
+regressor.add(LSTM(units = 11, activation='tanh', return_sequences = True, input_shape = (X_train_scaled.shape[1], 1)))
+regressor.add(Dropout(0.1)) #과적합을 피하기 위해 사용
 
 #두번째 LSTM layer
-regressor.add(LSTM(units = memory_cell, return_sequences = True))
-regressor.add(Dropout(0.2))
-
-#세번째 LSTM layer
-regressor.add(LSTM(units = memory_cell, return_sequences = True))
-regressor.add(Dropout(0.2))
+regressor.add(LSTM(units = memory_cell, activation='tanh', return_sequences = True))
+regressor.add(Dropout(0.1))
 
 #네번째 LSTM layer
-regressor.add(LSTM(units = memory_cell))
-regressor.add(Dropout(0.2))
+regressor.add(LSTM(units = memory_cell, activation='tanh'))
+regressor.add(Dropout(0.1))
 
 #출력층 추가
 regressor.add(Dense(units = 1, activation='relu')) #차원의 개수
@@ -58,7 +54,7 @@ regressor.compile(optimizer = 'adam', loss = 'mean_squared_error')
 regressor.fit(X_train_scaled, y_train_scaled, epochs = 256, batch_size = 16)
 
 #모델 저장
-#regressor.save('test_model_1.h5')
+regressor.save('SAPS_lstm_model_1.h5')
 
 #테스트 데이터 불러오기
 dataset_test = pd.read_csv('weather_data_test.csv', encoding='euc-kr')
@@ -80,7 +76,7 @@ predicted_solar_value = regressor.predict(real_data_scaled)
 predicted_solar_value = sc_y.inverse_transform(predicted_solar_value) #정형화된 값 다시 원래값으로 바꾸기
 
 '''
-아래는 출력값 확인
+#아래는 출력값 확인
 '''
 aver_calc = 0
 for i in range (len(real_value)):
