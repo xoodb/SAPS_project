@@ -1,4 +1,4 @@
-import update.apidb as apidb
+import apidb
 '''
 등록된 기기의 정보를 가져오는 함수
 '''
