@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 
 '''
-날짜를 불러오는 파일
+날짜를 불러오는 함수
 '''
 
 today = date.today() # 오늘의 날짜
@@ -20,6 +20,10 @@ def get_today(check): #오늘 날짜 반환
 
 def get_after_date(plus): #미래 날짜 반환
     want_date = (today + timedelta(plus)).strftime('%Y%m%d')
+    return want_date
+
+def get_after_date_format(plus): #미래 날짜 반환
+    want_date = (today + timedelta(plus))
     return want_date
 
 def get_after_date_line(plus):
